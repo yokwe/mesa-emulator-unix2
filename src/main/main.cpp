@@ -34,7 +34,7 @@
 
 #include "../util/util.h"
 
-auto logger = Logger::getLogger("main");
+static const Logger logger = Logger::getLogger("main");
 
 
 int main(int argc, char** argv) {
