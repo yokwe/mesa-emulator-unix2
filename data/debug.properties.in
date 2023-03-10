@@ -1,0 +1,12 @@
+log4j.rootCategory=DEBUG, FILE, CONSOLE
+
+log4j.appender.CONSOLE=ConsoleAppender
+log4j.appender.CONSOLE.layout=PatternLayout
+log4j.appender.CONSOLE.layout.ConversionPattern=%d{%H:%M:%S.%I} %-5p %-12c %m%n
+#log4j.appender.CONSOLE.layout.ConversionPattern=%-5p %-12c %m%n
+
+log4j.appender.FILE=FileAppender
+log4j.appender.FILE.fileName=@CMAKE_BINARY_DIR@/run/debug.log
+log4j.appender.FILE.layout=PatternLayout
+log4j.appender.FILE.layout.ConversionPattern=%d{%H:%M:%S.%I} %-5p %-12c %m%n
+#log4j.appender.FILE.layout.ConversionPattern=%-5p %-12c %m%n
