@@ -49,15 +49,15 @@ elseif (${HOST_SYSTEM} STREQUAL Darwin)
   #
   # Compile for arm64
   set(CMAKE_OSX_ARCHITECTURES arm64)
-  # SDK_PATH
-  execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)  
-  message(STATUS "SDK_PATH ${SDK_PATH}")
+  #
   # default include directories
+  #   clang++ -x c++ -E - -v -std=c++17  </dev/null
+  set(COMMAND_LINE_TOOLS_PATH "/Library/Developer/CommandLineTools")
   include_directories(SYSTEM
-    ${SDK_PATH}/usr/include/c++/v1
+    /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1
     /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/include
-    ${SDK_PATH}/usr/include
-    /Library/Developer/CommandLineTools/usr/include 
+    /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+    /Library/Developer/CommandLineTools/usr/include
     /opt/local/include
     )
   # default link directories
