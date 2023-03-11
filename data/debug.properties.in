@@ -1,4 +1,4 @@
-log4j.rootCategory=DEBUG, FILE, CONSOLE
+log4j.rootCategory=FILE, CONSOLE
 
 log4j.appender.CONSOLE=ConsoleAppender
 log4j.appender.CONSOLE.layout=PatternLayout
