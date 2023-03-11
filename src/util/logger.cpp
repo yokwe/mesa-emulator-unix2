@@ -29,49 +29,72 @@
  *******************************************************************************/
 
 //
-// util.h
+// logger.cpp
 //
 
-#pragma once
-
-#include <string>
-#include <signal.h>
-
-#include "format.h"
 #include "logger.h"
+
+#include <vector>
+
+#include <log4cxx/logmanager.h>
+#include <log4cxx/level.h>
+#include <log4cxx/logger.h>
+#include <log4cxx/propertyconfigurator.h>
 
 namespace util {
 // start of namespace util
 
-#define DEBUG_TRACE() logger.debug("****  TRACE  %-20s %5d %s", __FUNCTION__, __LINE__, __FILE__)
 
-class ErrorError {
-public:
-	const char *func;
-	const char *file;
-	const int   line;
+log4cxx::LevelPtr Logger::ALL   = log4cxx::Level::getAll();
+log4cxx::LevelPtr Logger::DEBUG = log4cxx::Level::getDebug();
+log4cxx::LevelPtr Logger::INFO  = log4cxx::Level::getInfo();
+log4cxx::LevelPtr Logger::WARN  = log4cxx::Level::getWarn();
+log4cxx::LevelPtr Logger::ERROR = log4cxx::Level::getError();
+log4cxx::LevelPtr Logger::FATAL = log4cxx::Level::getFatal();
+log4cxx::LevelPtr Logger::OFF   = log4cxx::Level::getOff();
 
-	ErrorError(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
-};
+std::vector<log4cxx::LevelPtr> Logger::level_stack;
 
-#define ERROR() { logger.fatal("ERROR %s %d %s", __FILE__, __LINE__, __FUNCTION__); logBackTrace(); throw ErrorError(__FUNCTION__, __FILE__, __LINE__); }
+void Logger::push_level(log4cxx::LevelPtr newValue) {
+	// save current level to priorityStack
+	level_stack.push_back(log4cxx::LogManager::getRootLogger()->getLevel());
+	// set root logger level
+	log4cxx::LogManager::getRootLogger()->setLevel(newValue);
+}
+void Logger::pop_level() {
+	if (level_stack.empty()) return;
 
-class Abort {
-public:
-	const char *func;
-	const char *file;
-	const int   line;
+	// restore current level from priorityStack
+	log4cxx::LevelPtr newValue = level_stack.back();
+	level_stack.pop_back();
 
-	Abort(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
-};
-#define ERROR_Abort() throw Abort(__FUNCTION__, __FILE__, __LINE__)
+	log4cxx::LogManager::getRootLogger()->setLevel(newValue);
+}
 
 
-void logBackTrace();
-void setSignalHandler(int signum = SIGSEGV);
 
-std::string demangle(const char* mangled);
+Logger Logger::get_logger(const char* name) {
+	static struct config_t {
+		config_t() {
+			static char *file_name = getenv("LOG_CONFIG");
+			if (file_name == nullptr) {
+				std::fprintf(stderr, "file_name == nullptr\n");
+				exit(1);
+			}
 
+			log4cxx::LogManager::resetConfiguration();
+			log4cxx::PropertyConfigurator::configure(file_name);
+		}
+		~config_t() {
+			log4cxx::LogManager::shutdown();
+		}
+	} config;
+
+
+	auto logger = log4cxx::LogManager::getLogger(name);
+
+	return Logger(logger);
+}
 
 // end of namespace util
 }

@@ -32,10 +32,12 @@
 // main.cpp
 //
 
+#include <cstdio>
+
 #include "../util/util.h"
 
-static const Logger logger = Logger::getLogger("main");
-
+#include "../util/logger.h"
+static const auto logger = util::Logger::get_logger("main");
 
 int main(int argc, char** argv) {
 	(void)argc;
@@ -43,9 +45,22 @@ int main(int argc, char** argv) {
 	//
 	logger.info("START");
 
-	std::string message("message");
+	util::setSignalHandler(SIGSEGV);
+	util::setSignalHandler(SIGILL);
+	util::setSignalHandler(SIGABRT);
 
-	logger.info("message %s", message);
+
+	std::string message("hello");
+
+	logger.info("AAA");
+	util::Logger::push_level(util::Logger::OFF);
+	logger.info("BBB");
+	util::Logger::pop_level();
+	logger.info("CCC");
+
+	util::logBackTrace();
+
+	util::fprintf(stderr, "AA %s AA\n", message);
 
 	logger.info("STOP");
 	//

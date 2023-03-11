@@ -29,48 +29,73 @@
  *******************************************************************************/
 
 //
-// util.h
+// format.h
 //
 
 #pragma once
 
+#include <type_traits>
 #include <string>
-#include <signal.h>
+#include <cstdio>
 
-#include "format.h"
-#include "logger.h"
 
 namespace util {
 // start of namespace util
 
-#define DEBUG_TRACE() logger.debug("****  TRACE  %-20s %5d %s", __FUNCTION__, __LINE__, __FILE__)
 
-class ErrorError {
-public:
-	const char *func;
-	const char *file;
-	const int   line;
+template<typename T>
+auto convert_arg_(T&& value) {
+	constexpr auto is_std_string = std::is_same<std::remove_cv_t<std::remove_reference_t<T>>, std::string>::value;
 
-	ErrorError(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
-};
+	if constexpr (is_std_string) {
+		return (value).c_str();
+	} else {
+		return std::forward<T>(value);
+	}
+}
 
-#define ERROR() { logger.fatal("ERROR %s %d %s", __FILE__, __LINE__, __FUNCTION__); logBackTrace(); throw ErrorError(__FUNCTION__, __FILE__, __LINE__); }
+template <typename ... Args>
+void snprintf_(std::string& result, int buffer_size, const char* format, Args&& ... args) {
+	char buf[buffer_size];
+	int ret = std::snprintf(buf, buffer_size, format, args ...);
+	if (buffer_size <= ret) {
+		// failure
+		// + 1 for trailing null character
+		snprintf_(result, ret + 1, format, args ...);
+	} else {
+		// success
+		result += buf;
+	}
+}
 
-class Abort {
-public:
-	const char *func;
-	const char *file;
-	const int   line;
 
-	Abort(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
-};
-#define ERROR_Abort() throw Abort(__FUNCTION__, __FILE__, __LINE__)
+//
+// snprintf - can take std::string as argument and return result as std::string
+//
+template <typename ... Args>
+void snprintf(std::string& result, int buffer_size, const char* format, Args&& ... args) {
+	snprintf_(result, buffer_size, format, convert_arg_(std::forward<Args>(args)) ...);
+}
+//
+// sprintf - can take std::string as argument and return result as std::string
+//
+template<typename ... Args, int DEFAULT_BUFFER_SIZE=512>
+std::string sprintf(const char* format, Args&& ... args) {
+	std::string result;
+    snprintf(result, DEFAULT_BUFFER_SIZE, format, args...);
+    return result;
+}
+//
+// fprintf - can take std::string as argument
+template<typename ... Args, int DEFAULT_BUFFER_SIZE=512>
+int fprintf(std::FILE* file, const char* format, Args&& ... args) {
+	std::string result;
+    snprintf(result, DEFAULT_BUFFER_SIZE, format, args...);
 
-
-void logBackTrace();
-void setSignalHandler(int signum = SIGSEGV);
-
-std::string demangle(const char* mangled);
+    // to keep same semantics for return value
+    int ret = std::fputs(result.c_str(), file);
+    return ret < 0 ? ret : result.size();
+}
 
 
 // end of namespace util

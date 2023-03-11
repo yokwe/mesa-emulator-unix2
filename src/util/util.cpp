@@ -32,32 +32,78 @@
 // util.cpp
 //
 
+#include <cxxabi.h>
+#include <execinfo.h>
+
 #include "util.h"
 
-#include <log4cxx/logmanager.h>
-#include <log4cxx/propertyconfigurator.h>
+#include "logger.h"
+static const auto logger = util::Logger::get_logger("util");
 
 
-Logger Logger::getLogger(const char* name) {
-	static struct config_t {
-		config_t() {
-			static char *file_name = getenv("LOG_CONFIG");
-			if (file_name == nullptr) {
-				std::fprintf(stderr, "file_name == nullptr\n");
-				exit(1);
+namespace util {
+// start of namesapce util
+
+
+void logBackTrace() {
+	const int BUFFER_SIZE = 100;
+	void *buffer[BUFFER_SIZE];
+
+	// get void*'s for all entries on the stack
+	int size = backtrace(buffer, BUFFER_SIZE);
+
+	char **msg = backtrace_symbols(buffer, size);
+
+	// print out all the frames
+	for(int i = 0; i < size; i++) {
+		std::string line(msg[i]);
+		auto pos = line.find("_Z");
+		if (pos == std::string::npos) {
+			// contains no mangled name
+			logger.fatal("%3d %s", i, msg[i]);
+		} else {
+			// contains mangled name
+			std::string left(line.substr(0, pos));
+			std::string middle;
+			for(; pos < line.size(); pos++) {
+				char c = line.at(pos);
+				if (std::isalnum(c) || c == '_') {
+					middle += c;
+					continue;
+				}
+				break;
 			}
-
-			log4cxx::LogManager::resetConfiguration();
-			log4cxx::PropertyConfigurator::configure(file_name);
-
+			std::string right(line.substr(pos));
+			middle = demangle(middle.c_str());
+			logger.fatal("%3d %s%s%s", i, left, middle, right);
 		}
-		~config_t() {
-			log4cxx::LogManager::shutdown();
-		}
-	} config;
+	}
+}
+
+static void signalHandler(int signum) {
+	logger.fatal("Error: signal %d:\n", signum);
+	logBackTrace();
+	exit(1);
+}
+
+void setSignalHandler(int signum) {
+	signal(signum, signalHandler);
+}
+
+std::string demangle(const char* mangled) {
+	char buffer[512];
+	size_t length(sizeof(buffer));
+	int status(0);
+
+	char* demangled = __cxxabiv1::__cxa_demangle(mangled, buffer, &length, &status);
+	if (status != 0) {
+		logger.warn("demange %d %s", status, mangled);
+	}
+
+	std::string ret(demangled);
+	return ret;
+}
 
 
-	auto logger = log4cxx::LogManager::getLogger(name);
-
-	return Logger(logger);
+// end of namespace util
 }
