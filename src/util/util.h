@@ -77,9 +77,6 @@ public:
 #define LOG_SYSCALL2(retVar, errNo, syscall)   { retVar = syscall; errNo = errno; if (retVar < 0) { logger.error("%s = %d", #syscall, retVar);  LOG_ERRNO(errNo)         } }
 #define CHECK_SYSCALL2(retVar, errNo, syscall) { retVar = syscall; errNo = errno; if (retVar < 0) { logger.error("%s = %d", #syscall, retVar);  LOG_ERRNO(errNo) ERROR() } }
 
-// count number of element in array
-#define COUNT_ELEMENT(array) ((sizeof(array)) / (sizeof(array[0])))
-
 
 //
 // back trace
