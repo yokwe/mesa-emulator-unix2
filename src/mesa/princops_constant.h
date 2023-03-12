@@ -530,5 +530,5 @@ constexpr CARD8 a305          = 0305;
 constexpr CARD8 a306          = 0306;
 
 
-// end   of namespace emsa
+// end   of namespace mesa
 }

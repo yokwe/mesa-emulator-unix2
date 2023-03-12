@@ -75,5 +75,5 @@ using LONG_INT = INT32;
 #define OFFSET4(s,m,n,p) (mesa::CARD32)(OFFSET3(s,m,n) + ((offsetof(s,m[0].p) - offsetof(s,m[0])))     / sizeof(mesa::CARD16))
 
 
-// end   of namespace emsa
+// end   of namespace mesa
 }

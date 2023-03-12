@@ -1108,5 +1108,5 @@ extern CARD16 savedSP;
 //extern LONG_CARDINAL lastTimeoutTime;
 
 
-// end   of namespace emsa
+// end   of namespace mesa
 }
