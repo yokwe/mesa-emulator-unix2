@@ -34,10 +34,7 @@
 
 #pragma once
 
-/// offsetof is defined in stddef.h
-#include <stddef.h>
-
-#include "mesa_type.h"
+#include "type.h"
 #include "princops.h"
 
 namespace mesa {

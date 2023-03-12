@@ -29,12 +29,15 @@
  *******************************************************************************/
 
 //
-// mesa_type.h
+// type.h
 //
 
 #pragma once
 
 #include <cstdint>
+
+// offset of is defined in stddef.h
+#include <stddef.h>
 
 namespace mesa {
 // start of namespace mesa

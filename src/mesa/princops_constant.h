@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "mesa_type.h"
+#include "type.h"
 
 namespace mesa {
 // start of namespace mesa
