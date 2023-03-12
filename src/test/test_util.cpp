@@ -106,10 +106,10 @@ public:
 	}
 	// mesa.h
 	void test_toIntMesaNumber() {
-		CPPUNIT_ASSERT_EQUAL(10, util::toIntMesaNumber("0x0A"));
-		CPPUNIT_ASSERT_EQUAL(10, util::toIntMesaNumber("012"));
-		CPPUNIT_ASSERT_EQUAL(10, util::toIntMesaNumber("AH"));
-		CPPUNIT_ASSERT_EQUAL(10, util::toIntMesaNumber("12B"));
+		CPPUNIT_ASSERT_EQUAL(16, util::toIntMesaNumber(std::string("0x10")));
+		CPPUNIT_ASSERT_EQUAL(16, util::toIntMesaNumber(std::string("10H")));
+		CPPUNIT_ASSERT_EQUAL(16, util::toIntMesaNumber(std::string("20B")));
+		CPPUNIT_ASSERT_EQUAL(16, util::toIntMesaNumber(std::string("16")));
 	}
 	// util.h
 	void test_demangle() {
