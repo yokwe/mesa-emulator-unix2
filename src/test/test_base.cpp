@@ -33,7 +33,7 @@
 //
 
 #include "../util/logger.h"
-static const auto logger = util::Logger::getLogger("base");
+static const auto logger = util::Logger::getLogger("test_base");
 
 #include "test_base.h"
 
