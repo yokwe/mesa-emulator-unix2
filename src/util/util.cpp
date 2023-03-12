@@ -36,6 +36,7 @@
 #include <execinfo.h>
 
 #include "util.h"
+#include "format.h"
 
 #include "logger.h"
 static const auto logger = util::Logger::getLogger("util");
@@ -77,7 +78,7 @@ std::vector<std::string> getBackTrace() {
 					break;
 				}
 				std::string right(line.substr(pos));
-				middle = demangle(middle.c_str());
+				middle = demangle(middle);
 				result.push_back(util::sprintf("%3d %s%s%s", i, left, middle, right));
 			}
 		}
@@ -105,17 +106,51 @@ void logBackTrace() {
 	logBackTrace(logger);
 }
 
-std::string demangle(const char* mangled) {
+std::string demangle(const std::string& mangled) {
 	char buffer[512];
 	size_t length(sizeof(buffer));
 	int status(0);
 
-	char* demangled = __cxxabiv1::__cxa_demangle(mangled, buffer, &length, &status);
+	char* demangled = __cxxabiv1::__cxa_demangle(mangled.c_str(), buffer, &length, &status);
 	if (status != 0) {
 		logger.warn("demange %d %s", status, mangled);
 	}
 
 	std::string ret(demangled);
+	return ret;
+}
+
+
+bool startsWith(const std::string_view& string, const std::string_view& literal) {
+	const size_t string_size(string.size());
+	const size_t literal_size(literal.size());
+	assert(0 < literal_size);
+
+	if (string_size < literal_size) {
+		return false;
+	} else {
+		std::string_view string_view(string.data(), literal_size);
+		return string_view == literal;
+	}
+}
+bool endsWith(const std::string_view& string, const std::string_view& literal) {
+	const size_t string_size(string.size());
+	const size_t literal_size(literal.size());
+	assert(0 < literal_size);
+
+	if (string_size < literal_size) {
+		return false;
+	} else {
+		std::string_view string_view(string.data() + (string_size - literal_size), literal_size);
+		return string_view == literal;
+	}
+}
+std::string toHexString(int size, const uint8_t* data) {
+	std::string ret;
+
+	for(int i = 0; i < size; i++) {
+		ret += sprintf("%02X", data[i]);
+	}
 	return ret;
 }
 

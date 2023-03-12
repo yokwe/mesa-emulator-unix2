@@ -55,7 +55,6 @@ public:
 
 	ErrorError(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
 };
-
 #define ERROR() { logger.fatal("ERROR %s %d %s", __FILE__, __LINE__, __FUNCTION__); logBackTrace(); throw ErrorError(__FUNCTION__, __FILE__, __LINE__); }
 
 class Abort {
@@ -69,19 +68,48 @@ public:
 #define ERROR_Abort() throw Abort(__FUNCTION__, __FILE__, __LINE__)
 
 
+// helper macro for syscall
+#define LOG_ERRNO(errNo)               { logger.error( "errno = %d  \"%s\"", errNo, strerror(errNo)); }
+#define LOG_SYSCALL(retVar, syscall)   { retVar = syscall; if (retVar < 0) { int errNo = errno; logger.error("%s = %d", #syscall, retVar);  LOG_ERRNO(errNo)         } }
+#define CHECK_SYSCALL(retVar, syscall) { retVar = syscall; if (retVar < 0) { int errNo = errno; logger.error("%s = %d", #syscall, retVar);  LOG_ERRNO(errNo) ERROR() } }
 
+#define LOG_SYSCALL2(retVar, errNo, syscall)   { retVar = syscall; errNo = errno; if (retVar < 0) { logger.error("%s = %d", #syscall, retVar);  LOG_ERRNO(errNo)         } }
+#define CHECK_SYSCALL2(retVar, errNo, syscall) { retVar = syscall; errNo = errno; if (retVar < 0) { logger.error("%s = %d", #syscall, retVar);  LOG_ERRNO(errNo) ERROR() } }
+
+// count number of element in array
+#define COUNT_ELEMENT(array) ((sizeof(array)) / (sizeof(array[0])))
+
+
+//
+// back trace
+//
 std::vector<std::string> getBackTrace();
-
 void logBackTrace(const Logger& logger);
 void logBackTrace();
 
-void signalHandler(int signum);
 
+//
+// signal handler
+//
+void signalHandler(int signum);
 inline void setSignalHandler(int signum = SIGSEGV) {
-	signal(signum, signalHandler);
+	::signal(signum, signalHandler);
 }
 
-std::string demangle(const char* mangled);
+
+//
+// demangle name
+//
+std::string demangle(const std::string& mangled);
+
+
+//
+// string
+//
+bool startsWith(const std::string_view& string, const std::string_view& literal);
+bool endsWith  (const std::string_view& string, const std::string_view& literal);
+std::string toHexString(int size, const uint8_t* data);
+
 
 
 // end of namespace util
