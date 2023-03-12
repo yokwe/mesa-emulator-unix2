@@ -44,11 +44,11 @@ static const auto logger = util::Logger::getLogger("test");
 int main() {
 	logger.debug("START");
 
-	util::setSignalHandler();
+	util::setSignalHandlers();
 
 	// printResult
 	// printProgress
-	bool showPrintResult   = false;
+	bool showPrintResult   = true;
 	bool showPrintProgress = true;
 
 	CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();
