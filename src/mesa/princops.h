@@ -999,5 +999,5 @@ struct ProcessDataArea {
 constexpr CARD32 StartPsb = (SIZE(ProcessDataArea) + SIZE(ProcessStateBlock) - 1) / SIZE(ProcessStateBlock);
 
 
-// end of namespace util
+// end   of namespace emsa
 }
