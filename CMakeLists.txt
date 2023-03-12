@@ -71,3 +71,4 @@ link_libraries (log4cxx)
 # add subdirectory
 add_subdirectory (src/util          build/util)
 add_subdirectory (src/main          build/main)
+add_subdirectory (src/test          build/test)
