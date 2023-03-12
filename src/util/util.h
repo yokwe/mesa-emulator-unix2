@@ -56,7 +56,7 @@ public:
 
 	ErrorError(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
 };
-#define ERROR() { logger.fatal("ERROR %s %d %s", __FILE__, __LINE__, __FUNCTION__); logBackTrace(); throw ErrorError(__FUNCTION__, __FILE__, __LINE__); }
+#define ERROR() { logger.fatal("ERROR %s %d %s", __FILE__, __LINE__, __FUNCTION__); util::logBackTrace(); throw util::ErrorError(__FUNCTION__, __FILE__, __LINE__); }
 
 class Abort {
 public:
@@ -66,7 +66,7 @@ public:
 
 	Abort(const char *func_, const char *file_, const int line_) : func(func_), file(file_), line(line_) {}
 };
-#define ERROR_Abort() throw Abort(__FUNCTION__, __FILE__, __LINE__)
+#define ERROR_Abort() throw util::Abort(__FUNCTION__, __FILE__, __LINE__)
 
 
 // helper macro for syscall
