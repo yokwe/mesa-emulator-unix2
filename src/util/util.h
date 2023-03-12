@@ -92,8 +92,13 @@ void logBackTrace();
 // signal handler
 //
 void signalHandler(int signum);
-inline void setSignalHandler(int signum = SIGSEGV) {
+inline void setSignalHandler(int signum) {
 	::signal(signum, signalHandler);
+}
+inline void setSignalHandlers() {
+	setSignalHandler(SIGSEGV);
+	setSignalHandler(SIGILL);
+	setSignalHandler(SIGABRT);
 }
 
 
