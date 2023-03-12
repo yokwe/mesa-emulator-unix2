@@ -19,6 +19,9 @@ all:
 clean:
 	cmake --build ${BUILD_DIR} --target clean
 
+build:
+	/usr/bin/time cmake --build ${BUILD_DIR} -- -v
+	
 help:
 	cmake --build ${BUILD_DIR} --target help
 
@@ -33,27 +36,16 @@ cmake-eclipse:
 	cp -rp ${BUILD_DIR}/.settings .
 
 
-build:
-	/usr/bin/time cmake --build ${BUILD_DIR} -- -v
-	
-distclean: distclean-qmake distclean-eclipse distclean-cmake clean-macos
+clean-file:
+	find . -type f -name '._*' -print -delete
 
-distclean-qmake:
-	rm -f  src/*/Makefile
-	rm -f  src/*/Makefile.Debug
-	rm -f  src/*/Makefile.Release
-	rm -f  src/*/object_script.*.Debug
-	rm -f  src/*/object_script.*.Release
-	rm -f  src/*/.qmake.stash
-
-distclean-eclipse:
-	rm -rf .project .cproject .settings build
-
-distclean-cmake:
+clean-build:
 	rm -rf ${BUILD_DIR}
 
-distclean-macos:
-	find . -type f -name '._*' -print -delete
+clean-eclipse:
+	rm -rf .project .cproject .settings build
+
+clean-all: clean-file clean-build clean-eclipse
 
 fix-permission:
 	find . -type d -exec chmod 0755 {} \;
