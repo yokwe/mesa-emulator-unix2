@@ -8,6 +8,7 @@ add_executable (
   test_base.cpp
   test_util.cpp
   test_princops.cpp
+  test_pilot.cpp
   )
 
 add_dependencies(test mesa util)
