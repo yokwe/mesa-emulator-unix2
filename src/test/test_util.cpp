@@ -42,20 +42,31 @@ static const auto logger = util::Logger::getLogger("test_util");
 class test_util : public test_base {
 	CPPUNIT_TEST_SUITE(test_util);
 
-	CPPUNIT_TEST(test_aa);
-	CPPUNIT_TEST(test_bb);
+	CPPUNIT_TEST(test_demangle);
+	CPPUNIT_TEST(test_startsWith);
+	CPPUNIT_TEST(test_endsWith);
 
 	CPPUNIT_TEST_SUITE_END();
 
 public:
-	void test_aa() {
-		(void)logger;
-//		logger.info("%s", __func__);
-	}
-	void test_bb() {
-//		logger.info("%s", __func__);
-	}
+	void test_demangle() {
+		auto a = typeid(std::vector<int>).name();
+		auto b = util::demangle(a);
+		auto c = util::demangle(typeid(std::vector<int>).name());
 
+		logger.info("a = %s!", a);
+		logger.info("b = %s!", b);
+		logger.info("c = %s!", c);
+    	CPPUNIT_ASSERT_EQUAL(b, c);
+	}
+	void test_startsWith() {
+		CPPUNIT_ASSERT_EQUAL(true,  util::startsWith("aabbcc", "aa"));
+		CPPUNIT_ASSERT_EQUAL(false, util::startsWith("aabbcc", "aaa"));
+	}
+	void test_endsWith() {
+		CPPUNIT_ASSERT_EQUAL(true,  util::endsWith("aabbcc", "cc"));
+		CPPUNIT_ASSERT_EQUAL(false, util::endsWith("aabbcc", "ccc"));
+	}
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(test_util);
