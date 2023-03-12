@@ -37,7 +37,7 @@
 #include "../util/util.h"
 
 #include "../util/logger.h"
-static const auto logger = util::Logger::get_logger("main");
+static const auto logger = util::Logger::getLogger("main");
 
 int main(int argc, char** argv) {
 	(void)argc;
@@ -53,12 +53,12 @@ int main(int argc, char** argv) {
 	std::string message("hello");
 
 	logger.info("AAA");
-	util::Logger::push_level(util::Logger::OFF);
+	util::Logger::pushLevel(util::Logger::OFF);
 	logger.info("BBB");
-	util::Logger::pop_level();
+	util::Logger::popLevel();
 	logger.info("CCC");
 
-	util::logBackTrace();
+	util::logBackTrace(logger);
 
 	util::fprintf(stderr, "AA %s AA\n", message);
 

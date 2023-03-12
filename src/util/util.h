@@ -35,6 +35,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
 #include <signal.h>
 
 #include "format.h"
@@ -67,8 +69,17 @@ public:
 #define ERROR_Abort() throw Abort(__FUNCTION__, __FILE__, __LINE__)
 
 
+
+std::vector<std::string> getBackTrace();
+
+void logBackTrace(const Logger& logger);
 void logBackTrace();
-void setSignalHandler(int signum = SIGSEGV);
+
+void signalHandler(int signum);
+
+inline void setSignalHandler(int signum = SIGSEGV) {
+	signal(signum, signalHandler);
+}
 
 std::string demangle(const char* mangled);
 

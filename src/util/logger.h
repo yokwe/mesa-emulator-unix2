@@ -37,6 +37,7 @@
 #include <vector>
 #include <string>
 
+#include <log4cxx/log4cxx.h>
 #include <log4cxx/logger.h>
 
 #include "format.h"
@@ -48,76 +49,76 @@ namespace util {
 
 class Logger {
 public:
-	static Logger get_logger(const char *name);
+	static Logger getLogger(const char *name);
 
-    static log4cxx::LevelPtr ALL;
-    static log4cxx::LevelPtr DEBUG;
-    static log4cxx::LevelPtr INFO;
-    static log4cxx::LevelPtr WARN;
-    static log4cxx::LevelPtr ERROR;
-    static log4cxx::LevelPtr FATAL;
-    static log4cxx::LevelPtr OFF;
+    static inline log4cxx::LevelPtr ALL   = log4cxx::Level::getAll();
+    static inline log4cxx::LevelPtr DEBUG = log4cxx::Level::getDebug();
+    static inline log4cxx::LevelPtr INFO  = log4cxx::Level::getInfo();
+    static inline log4cxx::LevelPtr WARN  = log4cxx::Level::getWarn();
+    static inline log4cxx::LevelPtr ERROR = log4cxx::Level::getError();
+    static inline log4cxx::LevelPtr FATAL = log4cxx::Level::getFatal();
+    static inline log4cxx::LevelPtr OFF   = log4cxx::Level::getOff();
 
-	static void push_level(log4cxx::LevelPtr newValue);
-	static void pop_level();
+	static void pushLevel(log4cxx::LevelPtr newValue);
+	static void popLevel();
 
 
 	// std::string
 	void debug(const std::string& string) const {
-		m_logger->debug(string);
+		logger->debug(string);
 	}
 	void info(const std::string& string) const {
-		m_logger->info(string);
+		logger->info(string);
 	}
 	void warn(const std::string& string) const{
-		m_logger->warn(string);
+		logger->warn(string);
 	}
 	void error(const std::string& string) const {
-		m_logger->error(string);
+		logger->error(string);
 	}
 	void fatal(const std::string& string) const {
-		m_logger->fatal(string);
+		logger->fatal(string);
 	}
 
 	// const char*
 	void debug(const char* string) const {
-		m_logger->debug(std::string(string));
+		logger->debug(std::string(string));
 	}
 	void info(const char* string) const {
-		m_logger->info(std::string(string));
+		logger->info(std::string(string));
 	}
 	void warn(const char* string) const {
-		m_logger->warn(std::string(string));
+		logger->warn(std::string(string));
 	}
 	void error(const char* string) const {
-		m_logger->error(std::string(string));
+		logger->error(std::string(string));
 	}
 	void fatal(const char* string) const {
-		m_logger->fatal(std::string(string));
+		logger->fatal(std::string(string));
 	}
 
 
     template<typename... Args> void debug(const char* format, Args&& ... args) const {
-    	m_logger->debug(sprintf(format, args...));
+    	logger->debug(sprintf(format, args...));
     }
     template<typename... Args> void info(const char* format, Args&& ... args) const {
-     	m_logger->info(sprintf(format, args...));
+     	logger->info(sprintf(format, args...));
      }
     template<typename... Args> void warn(const char* format, Args&& ... args) const {
-     	m_logger->warn(sprintf(format, args...));
+     	logger->warn(sprintf(format, args...));
      }
     template<typename... Args> void error(const char* format, Args&& ... args) const {
-    	m_logger->error(sprintf(format, args...));
+    	logger->error(sprintf(format, args...));
     }
     template<typename... Args> void fatal(const char* format, Args&& ... args) const {
-    	m_logger->fatal(sprintf(format, args...));
+    	logger->fatal(sprintf(format, args...));
     }
 
 private:
-    static std::vector<log4cxx::LevelPtr> level_stack;
+    static inline std::vector<log4cxx::LevelPtr> levelStack;
 
-	log4cxx::LoggerPtr m_logger;
-	Logger(log4cxx::LoggerPtr logger) : m_logger(logger) {}
+	log4cxx::LoggerPtr logger;
+	Logger(log4cxx::LoggerPtr logger_) : logger(logger_) {}
 };
 
 

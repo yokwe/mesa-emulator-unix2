@@ -34,8 +34,7 @@
 
 #include "logger.h"
 
-#include <vector>
-
+#include <log4cxx/log4cxx.h>
 #include <log4cxx/logmanager.h>
 #include <log4cxx/level.h>
 #include <log4cxx/logger.h>
@@ -45,35 +44,25 @@ namespace util {
 // start of namespace util
 
 
-log4cxx::LevelPtr Logger::ALL   = log4cxx::Level::getAll();
-log4cxx::LevelPtr Logger::DEBUG = log4cxx::Level::getDebug();
-log4cxx::LevelPtr Logger::INFO  = log4cxx::Level::getInfo();
-log4cxx::LevelPtr Logger::WARN  = log4cxx::Level::getWarn();
-log4cxx::LevelPtr Logger::ERROR = log4cxx::Level::getError();
-log4cxx::LevelPtr Logger::FATAL = log4cxx::Level::getFatal();
-log4cxx::LevelPtr Logger::OFF   = log4cxx::Level::getOff();
-
-std::vector<log4cxx::LevelPtr> Logger::level_stack;
-
-void Logger::push_level(log4cxx::LevelPtr newValue) {
+void Logger::pushLevel(log4cxx::LevelPtr newValue) {
 	// save current level to priorityStack
-	level_stack.push_back(log4cxx::LogManager::getRootLogger()->getLevel());
+	levelStack.push_back(log4cxx::LogManager::getRootLogger()->getLevel());
 	// set root logger level
 	log4cxx::LogManager::getRootLogger()->setLevel(newValue);
 }
-void Logger::pop_level() {
-	if (level_stack.empty()) return;
+void Logger::popLevel() {
+	if (levelStack.empty()) return;
 
 	// restore current level from priorityStack
-	log4cxx::LevelPtr newValue = level_stack.back();
-	level_stack.pop_back();
+	log4cxx::LevelPtr newValue = levelStack.back();
+	levelStack.pop_back();
 
 	log4cxx::LogManager::getRootLogger()->setLevel(newValue);
 }
 
 
 
-Logger Logger::get_logger(const char* name) {
+Logger Logger::getLogger(const char* name) {
 	static struct config_t {
 		config_t() {
 			static char *file_name = getenv("LOG_CONFIG");

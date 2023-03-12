@@ -38,56 +38,71 @@
 #include "util.h"
 
 #include "logger.h"
-static const auto logger = util::Logger::get_logger("util");
+static const auto logger = util::Logger::getLogger("util");
 
 
 namespace util {
 // start of namesapce util
 
 
-void logBackTrace() {
-	const int BUFFER_SIZE = 100;
-	void *buffer[BUFFER_SIZE];
+std::vector<std::string> getBackTrace() {
+	std::vector<std::string> result;
 
-	// get void*'s for all entries on the stack
-	int size = backtrace(buffer, BUFFER_SIZE);
+	{
+		const int BUFFER_SIZE = 100;
+		void *buffer[BUFFER_SIZE];
 
-	char **msg = backtrace_symbols(buffer, size);
+		// get void*'s for all entries on the stack
+		int size = backtrace(buffer, BUFFER_SIZE);
 
-	// print out all the frames
-	for(int i = 0; i < size; i++) {
-		std::string line(msg[i]);
-		auto pos = line.find("_Z");
-		if (pos == std::string::npos) {
-			// contains no mangled name
-			logger.fatal("%3d %s", i, msg[i]);
-		} else {
-			// contains mangled name
-			std::string left(line.substr(0, pos));
-			std::string middle;
-			for(; pos < line.size(); pos++) {
-				char c = line.at(pos);
-				if (std::isalnum(c) || c == '_') {
-					middle += c;
-					continue;
+		char **msg = backtrace_symbols(buffer, size);
+
+		// print out all the frames
+		for(int i = 0; i < size; i++) {
+			std::string line(msg[i]);
+			auto pos = line.find("_Z");
+			if (pos == std::string::npos) {
+				// contains no mangled name
+				result.push_back(util::sprintf("%3d %s", i, msg[i]));
+			} else {
+				// contains mangled name
+				std::string left(line.substr(0, pos));
+				std::string middle;
+				for(; pos < line.size(); pos++) {
+					char c = line.at(pos);
+					if (std::isalnum(c) || c == '_') {
+						middle += c;
+						continue;
+					}
+					break;
 				}
-				break;
+				std::string right(line.substr(pos));
+				middle = demangle(middle.c_str());
+				result.push_back(util::sprintf("%3d %s%s%s", i, left, middle, right));
 			}
-			std::string right(line.substr(pos));
-			middle = demangle(middle.c_str());
-			logger.fatal("%3d %s%s%s", i, left, middle, right);
 		}
+
 	}
+
+	return result;
 }
 
-static void signalHandler(int signum) {
+void signalHandler(int signum) {
 	logger.fatal("Error: signal %d:\n", signum);
-	logBackTrace();
+	logBackTrace(logger);
+
 	exit(1);
 }
 
-void setSignalHandler(int signum) {
-	signal(signum, signalHandler);
+void logBackTrace(const Logger& logger) {
+	logger.info("==== start of back trace ====");
+	for(const auto& e: getBackTrace()) {
+		logger.info(e);
+	}
+	logger.info("==== end   of back trace ====");
+}
+void logBackTrace() {
+	logBackTrace(logger);
 }
 
 std::string demangle(const char* mangled) {
