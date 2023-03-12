@@ -34,6 +34,7 @@
 
 #include "princops.h"
 
+// ERROR is defined in util.h
 #include "../util/util.h"
 
 #include "../util/logger.h"
@@ -74,6 +75,48 @@ POINTER AVLink(CARD16 u) {
 	if (avi.tag != (CARD16)AVItemType::frame) ERROR();
 	return u;
 }
+
+
+
+// 3.3.2 Evaluation Stack
+CARD16 stack[StackDepth];
+CARD16 SP;
+
+// 3.3.3 Data and Status Registers
+CARD16 PID[4]; // Processor ID
+//CARD16 MP;     // Maintenance Panel
+//CARD32 IT;     // Interval Timer
+//CARD16 WM;     // Wakeup mask register - 10.4.4
+//CARD16 WP;     // Wakeup pending register - 10.4.4.1
+//CARD16 WDC;    // Wakeup disable counter - 10.4.4.3
+//CARD16 PTC;    // Process timeout counter - 10.4.5
+CARD16 XTS;    // Xfer trap status - 9.5.5
+
+// 3.3.1 Control Registers
+CARD16            PSB; // PsbIndex - 10.1.1
+//MdsHandle         MDS;
+LocalFrameHandle  LF;  // POINTER TO LocalVariables
+GlobalFrameHandle GF;  // LONG POINTER TO GlobalVarables
+CARD32            CB;  // LONG POINTER TO CodeSegment
+CARD16            PC;
+GFTHandle         GFI;
+
+// 4.5 Instruction Execution
+CARD8  breakByte;
+CARD16 savedPC;
+CARD16 savedSP;
+
+// 10.4.1 Scheduler
+//int running;
+
+// 10.4.5 Timeouts
+// TimeOutInterval:LONG CARDINAL;
+// One tick = 40 milliseconds
+//const LONG_CARDINAL TimeOutInterval = 40 * 1000;
+
+// time: LONG CARDINAL
+// Due to name conflict with time, rename to time_CheckForTimeouts
+//LONG_CARDINAL lastTimeoutTime;
 
 
 // end   of namespace emsa

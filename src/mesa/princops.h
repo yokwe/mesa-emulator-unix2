@@ -40,6 +40,12 @@ namespace mesa {
 // start of namespace mesa
 
 
+
+//
+// type
+//
+
+
 // 2.1 Basic Data Types
 // constexpr int WordSize = Environment::bitsPerWord;
 constexpr int WordSize = 16;
@@ -997,6 +1003,109 @@ struct ProcessDataArea {
 // StartPsb: PsbIndex = (SIZE[ProcessDataArea] + SIZE[ProcessStateBlock] - 1) / SIZE[ProcessStateBlock];
 // StartPsb <= (64 + 7) / 8 = 8
 constexpr CARD32 StartPsb = (SIZE(ProcessDataArea) + SIZE(ProcessStateBlock) - 1) / SIZE(ProcessStateBlock);
+
+
+
+//
+// function
+//
+
+
+// Block Transfer
+
+// Control Transfer
+
+// 9.3 Control Transfer Primitives
+void XFER(ControlLink dst, ShortControlLink src, XferType type, int freeFlag);
+
+// 9.5.1 Trap Routines
+void BoundsTrap();
+void BreakTrap();
+void CodeTrap(GFTHandle gfi);
+void ControlTrap(ShortControlLink src);
+void DivCheckTrap();
+void DivZeroTrap();
+void EscOpcodeTrap(BYTE opcode);
+void InterruptError();
+void OpcodeTrap(BYTE opcode);
+void PointerTrap();
+void ProcessTrap();
+void RescheduleError();
+void StackError();
+void UnboundTrap(ControlLink dst);
+void HardwareError();
+
+// Process
+
+// 10.4.1 Scheduler
+void Reschedule(int preemption = 0);
+
+// 10.4.2.1 Saving and Loading Process State
+void SaveProcess(int preemption);
+LocalFrameHandle LoadProcess();
+
+// 10.4.2.2 State Vector Allocation
+int EmptyState(CARD16 pri);
+
+// 10.4.3 Faults
+void FrameFault(FSIndex fsi);
+void PageFault(LONG_POINTER ptr);
+void WriteProtectFault(LONG_POINTER ptr);
+
+// 10.4.4.2 Interrupt Processing
+int ProcessInterrupt();
+int CheckForInterrupt();
+
+// 10.4.5 Timeouts
+int TimeoutScan();
+int CheckForTimeouts();
+
+
+
+//
+// variable
+//
+
+
+// 3.3.2 Evaluation Stack
+extern CARD16 stack[StackDepth];
+extern CARD16 SP;
+
+// 3.3.3 Data and Status Registers
+extern CARD16 PID[4]; // Processor ID
+//extern CARD16 MP;     // Maintenance Panel
+//extern CARD32 IT;     // Interval Timer
+//extern CARD16 WM;     // Wakeup mask register - 10.4.4
+//extern CARD16 WP;     // Wakeup pending register - 10.4.4.1
+//extern CARD16 WDC;    // Wakeup disable counter - 10.4.4.3
+//extern CARD16 PTC;    // Process timeout counter - 10.4.5
+extern CARD16 XTS;    // Xfer trap status - 9.5.5
+
+// 3.3.1 Control Registers
+extern CARD16            PSB; // PsbIndex - 10.1.1
+//extern MdsHandle         MDS;
+extern LocalFrameHandle  LF;  // POINTER TO LocalVariables
+extern GlobalFrameHandle GF;  // LONG POINTER TO GlobalVarables
+extern CARD32            CB;  // LONG POINTER TO CodeSegment
+extern CARD16            PC;
+extern GFTHandle         GFI;
+
+// 4.5 Instruction Execution
+extern CARD8  breakByte;
+extern CARD16 savedPC;
+extern CARD16 savedSP;
+
+// 10.4.1 Scheduler
+//extern int running;
+
+// 10.4.5 Timeouts
+// TimeOutInterval:LONG CARDINAL;
+// One tick = 40 milliseconds
+//const LONG_CARDINAL TimeOutInterval = 40 * 1000;
+
+// time: LONG CARDINAL
+// Due to name conflict with time, rename to time_CheckForTimeouts
+//extern LONG_CARDINAL lastTimeoutTime;
 
 
 // end   of namespace emsa
