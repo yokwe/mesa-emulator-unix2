@@ -7,8 +7,9 @@ add_executable (
   main.cpp
   test_base.cpp
   test_util.cpp
+  test_princops.cpp
   )
 
-add_dependencies(test util)
+add_dependencies(test mesa util)
 
-target_link_libraries (test util cppunit)
+target_link_libraries (test mesa util cppunit)
