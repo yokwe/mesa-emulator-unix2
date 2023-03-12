@@ -50,6 +50,7 @@ void Logger::pushLevel(log4cxx::LevelPtr newValue) {
 	// set root logger level
 	log4cxx::LogManager::getRootLogger()->setLevel(newValue);
 }
+
 void Logger::popLevel() {
 	if (levelStack.empty()) return;
 
@@ -59,8 +60,6 @@ void Logger::popLevel() {
 
 	log4cxx::LogManager::getRootLogger()->setLevel(newValue);
 }
-
-
 
 Logger Logger::getLogger(const char* name) {
 	static struct config_t {
@@ -84,6 +83,7 @@ Logger Logger::getLogger(const char* name) {
 
 	return Logger(logger);
 }
+
 
 // end of namespace util
 }

@@ -42,6 +42,7 @@ static const auto logger = util::Logger::getLogger("mesa");
 namespace util {
 // start of namespace util
 
+
 int toIntMesaNumber(const std::string& string) {
 	int radix = 0;
 	std::string numberString;

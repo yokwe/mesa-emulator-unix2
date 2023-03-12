@@ -45,6 +45,7 @@
 namespace util {
 // start of namespace util
 
+
 #define DEBUG_TRACE() logger.debug("****  TRACE  %-20s %5d %s", __FUNCTION__, __LINE__, __FILE__)
 
 class ErrorError {
@@ -114,7 +115,6 @@ std::string demangle(const std::string& mangled);
 bool startsWith(const std::string_view& string, const std::string_view& literal);
 bool endsWith  (const std::string_view& string, const std::string_view& literal);
 std::string toHexString(int size, const uint8_t* data);
-
 
 
 // end of namespace util
