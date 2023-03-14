@@ -43,6 +43,6 @@ static const auto logger = util::Logger::getLogger("memory");
 
 
 namespace mesa {
-
-
+// start of namespace mesa
+// end   of namespace mesa
 }
